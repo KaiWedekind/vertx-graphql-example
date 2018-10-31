@@ -1,1 +1,1 @@
-# vertx-graphql
+# Vertx - GraphQL
