@@ -1,0 +1,103 @@
+*,
+*:after,
+*:before {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+#graphiql {
+  height: 100vh;
+}
+
+.graphiql-container .topBar {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  height: 55px;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 0;
+  padding: 0 .5rem;
+  font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif;
+}
+
+.graphiql-container .title {
+  position: relative;
+  margin-right: auto;
+}
+
+.graphiql-container .title * {
+  color: transparent;
+  opacity: 0;
+}
+
+.graphiql-container .title::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  content: url('data:image/svg+xml; utf8, <svg viewBox="0 0 525 261" height="20" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><circle fill="#3395E8" cx="213" cy="164" r="96"/><rect fill="#1A76D5" width="94" height="260" rx="30"/><path d="M404.393 54.093c7.46-14.793 19.557-14.789 27.015 0l90.485 179.43c7.46 14.793.071 26.785-16.494 26.785H330.402c-16.57 0-23.952-11.996-16.494-26.785l90.485-179.43z" fill="#86CAFA"/></g></svg>');
+}
+
+.graphiql-container .title::after {
+  position: absolute;
+  bottom: -1px;
+  left: 48px;
+  content: 'explorer.';
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.graphiql-container .execute-button {
+  border-radius: 0;
+  box-shadow: none;
+  background: #fff;
+  border: 1px solid #ddd;
+}
+
+.graphiql-container .toolbar {
+  margin-right: auto;
+}
+
+.graphiql-container .toolbar-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  box-sizing: border-box;
+  background: #fff;
+  box-shadow: none;
+  border-color: #ddd;
+  border-radius: 0;
+  margin-right: auto;
+}
+
+.graphiql-container .docExplorerShow {
+  background: #fff;
+}
+
+.graphiql-container .variable-editor-title,
+.graphiql-container .result-window .CodeMirror-gutters {
+  background-color: #f7f7f7;
+}
+
+.graphiql-container .doc-explorer-title-bar,
+.graphiql-container .history-title-bar {
+  height: 55px;
+}
+
+.graphiql-container .doc-explorer-contents,
+.graphiql-container .history-contents {
+  top: 54px;
+}
+
+.graphiql-container .doc-explorer-title,
+.graphiql-container .history-title {
+  display: flex;
+  align-items: center;
+}

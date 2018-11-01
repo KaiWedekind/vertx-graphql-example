@@ -100,6 +100,7 @@
                     <include>node_modules/@vertx/web/**.*</include>
                     <include>node_modules/@vertx/auth-common/**.*</include>
                     <include>node_modules/@vertx/web-common/**.*</include>
+                    <include>node_modules/graphql/**.*</include>
                   </includes>
                   <filtering>false</filtering>
                 </resource>

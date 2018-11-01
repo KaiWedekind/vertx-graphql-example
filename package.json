@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@vertx/core": "^3.5.4",
-    "@vertx/web": "^3.5.4"
+    "@vertx/web": "^3.5.4",
+    "graphql": "^14.0.2"
   }
 }
