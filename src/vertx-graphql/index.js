@@ -3,8 +3,7 @@
 
 import {
   graphql,
-  buildSchema,
-  parseValue
+  buildSchema
 } from 'graphql';
 
 import {
@@ -16,9 +15,10 @@ import {
 } from './parse-body';
 
 const getGraphQLParams = (ctx) => {
-  return parseBody(ctx).then(({ error, data }) => {
-    return { error, data };
-  });
+  return parseBody(ctx)
+    .then(({ error, data }) => {
+      return { error, data };
+    });
 }
 
 const graphqlVertx = ({ schema, resolvers, context }) => {
@@ -46,32 +46,41 @@ const graphqlVertx = ({ schema, resolvers, context }) => {
             .end();
         }
 
-        const query = data.query;
+        const requestString = data.query;
+        const contextValue = context;
+        const variableValues = data.variables;
+        const operationName = data.operationName;
 
-        var root = {
+        var rootValue = {
           ...resolvers.Query,
           ...resolvers.Mutation,
           ...resolvers.Subscription
         };
 
-        graphql(schema, query, root, context)
-          .then((resolvedData) => {
-            if (resolvedData.errors) {
-              return response
-                .putHeader('content-type', 'application/json')
-                .setChunked(true)
-                .write(JSON.stringify({
-                  errors: resolvedData.errors
-                }))
-                .end();
-            }
-
+        graphql(
+          schema,
+          requestString,
+          rootValue,
+          contextValue,
+          variableValues,
+          operationName
+        ).then((resolvedData) => {
+          if (resolvedData.errors) {
             return response
               .putHeader('content-type', 'application/json')
               .setChunked(true)
-              .write(JSON.stringify(resolvedData))
+              .write(JSON.stringify({
+                errors: resolvedData.errors
+              }))
               .end();
-          });
+          }
+
+          return response
+            .putHeader('content-type', 'application/json')
+            .setChunked(true)
+            .write(JSON.stringify(resolvedData))
+            .end();
+        });
       });
   }
 }
@@ -113,31 +122,28 @@ class VertxGraphQL {
       throw new Error('GraphQL middleware requires app.');
     }
 
-    if (typeof app.getRoutes === 'function') {
-      graphqlEndpoint = graphqlEndpoint || '/graphql'
-      
+    graphqlEndpoint = graphqlEndpoint || '/graphql'
 
-      if (typeof graphqlEndpoint === 'string') {
-        graphqlEndpoint = (graphqlEndpoint[0] === '/')
-          ? graphqlEndpoint
-          : `/${graphqlEndpoint}`;
-      } else {
-        graphqlEndpoint = '/graphql';
-      }
+    if (typeof graphqlEndpoint === 'string') {
+      graphqlEndpoint = (graphqlEndpoint[0] === '/')
+        ? graphqlEndpoint
+        : `/${graphqlEndpoint}`;
+    } else {
+      graphqlEndpoint = '/graphql';
+    }
 
-      app.post(graphqlEndpoint).handler(graphqlVertx({
-        schema: this.schema,
-        resolvers: this.resolvers,
-        context: this.context
+    app.post(graphqlEndpoint).handler(graphqlVertx({
+      schema: this.schema,
+      resolvers: this.resolvers,
+      context: this.context
+    }));
+
+    if (typeof graphiqlEndpoint === 'string') {
+      app.get(graphiqlEndpoint).handler(graphiqlVertx({ 
+        endpointURL: graphqlEndpoint,
+        subscriptionsEndpoint: '',
+        graphiqlUI: graphiqlUI
       }));
-
-      if (typeof graphiqlEndpoint === 'string') {
-        app.get(graphiqlEndpoint).handler(graphiqlVertx({ 
-          endpointURL: graphqlEndpoint,
-          subscriptionsEndpoint: '',
-          graphiqlUI: graphiqlUI
-        }));
-      }
     }
   }
 }

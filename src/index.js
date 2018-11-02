@@ -46,7 +46,7 @@ const resolvers = {
     welcome: () => 'Welcome to Vert.x GraphQL!',
   },
   Mutation: {
-    createMessage: ({ input }) => {
+    createMessage: ({ input }, context) => {
       return {
         id: 123,
         content: 'Content XYZ',

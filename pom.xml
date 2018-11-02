@@ -101,6 +101,7 @@
                     <include>node_modules/@vertx/auth-common/**.*</include>
                     <include>node_modules/@vertx/web-common/**.*</include>
                     <include>node_modules/graphql/**.*</include>
+                    <include>node_modules/querystring/**.*</include>
                   </includes>
                   <filtering>false</filtering>
                 </resource>
