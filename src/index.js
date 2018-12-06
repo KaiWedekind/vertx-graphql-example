@@ -1,86 +1,22 @@
-/// <reference types="@vertx/core/runtime" />
-// @ts-check
+import { GraphQLServer } from './graphql-vertx';
 
-import {
-  Router,
-  BodyHandler,
-  StaticHandler
-} from '@vertx/web';
+import { resolvers, typeDefs, context } from './graphql';
 
-import {
-  VertxGraphQL
-} from './vertx-graphql';
+const server = new GraphQLServer({ typeDefs, resolvers, context });
 
-const app = Router.router(vertx);
-const PORT = 9100;
-
-app.route().handler(BodyHandler.create().handle);
-app.route().handler(StaticHandler.create().handle);
-
-// The GraphQL schema
-const typeDefs = `
-  input MessageInput {
-    content: String
-    author: String
-  }
-
-  type Message {
-    id: ID!
-    content: String
-    author: String
-  }
-
-  type Query {
-    hello: String
-    welcome: String
-  }
-
-  type Mutation {
-    createMessage(input: MessageInput): Message
-  }
-`;
-
-const resolvers = {
-  Query: {
-    hello: () => 'Hello world!',
-    welcome: () => 'Welcome to Vert.x GraphQL!',
-  },
-  Mutation: {
-    createMessage: ({ input }, context) => {
-      return {
-        id: 123,
-        content: 'Content XYZ',
-        author: 'Me'
-      }
-    }
-  }
-};
-
-const context = {
-  mongoDB: true
-}
-
-const graphQL = new VertxGraphQL({ typeDefs, resolvers, context });
-
-graphQL.applyMiddleware({ 
-  app, 
-  graphqlEndpoint: '/graphql',
-  graphiqlEndpoint: '/explorer',
+const options = { 
+  port: 9100,
+  endpoint: '/graphql',
+  graphiql: '/graphiql',
+  playground: '/playground',
+  subscriptions: `ws://localhost:9100/subscriptions`,
   graphiqlUI: {
     // title: 'Middot Explorer',
     // favicon: './images/favicon.ico',
     // stylesheet: './css/graphiql-custom.css'
   }
-});
+}
 
-app.route().handler((ctx) => {
-  ctx.response().end('Hello from Vert.x GraphQL!');
+server.start(options, () => {
+  console.log('Server is running on http://localhost:' + options.port);
 });
-
-vertx.createHttpServer()
-  .requestHandler((result) => {
-    return app.accept(result);
-  })
-  .listen(PORT, () => {
-    console.log('Server started')
-  });
