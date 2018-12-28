@@ -12,7 +12,8 @@
     "test": "es4x exec test",
     "package": "es4x package",
     "docker": "yarn package -d",
-    "build": "sh ./scripts/build.sh"
+    "build": "sh ./scripts/build.sh",
+    "publish": "sh ./scripts/publish.sh"
   },
   "devDependencies": {
     "@vertx/unit": "^3.6.2",
@@ -24,7 +25,7 @@
     "@vertx/web": "^3.6.2",
     "graphql": "^14.0.2",
     "querystring": "^0.2.0",
-    "vertx-graphql": "^1.0.2"
+    "vertx-graphql": "^1.0.3"
   },
   "bugs": {
     "url": "https://github.com/KaiWedekind/vertx-graphql-example/issues"

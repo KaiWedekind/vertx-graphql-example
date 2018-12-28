@@ -103,10 +103,10 @@ querystring@^0.2.0:
   resolved "https://registry.yarnpkg.com/querystring/-/querystring-0.2.0.tgz#b209849203bb25df820da756e747005878521620"
   integrity sha1-sgmEkgO7Jd+CDadW50cAWHhSFiA=
 
-vertx-graphql@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/vertx-graphql/-/vertx-graphql-1.0.2.tgz#ae38dadd2dc78abb2e61cf04991a4ccddabe42b9"
-  integrity sha512-0CKQd126gYZtURyHLepmNGnhUQ+JNXrqB8UnCp7vdEVPmq+J8Ni/a0EO7U2SOiYwOxvLwDwnWEQhLiw870jcLQ==
+vertx-graphql@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/vertx-graphql/-/vertx-graphql-1.0.3.tgz#68008d2780e5405e42b65eff713d43b2e8010e71"
+  integrity sha512-bCPrOeDU4Nghra8C/mqOX0r3ctQa+OlZwhA8Xbz9WuIxvbRThA63S3+v+rwxuu0pPwBQZushaaDwToUOFv7g4Q==
 
 watch@^1.0.2:
   version "1.0.2"

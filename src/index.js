@@ -1,20 +1,24 @@
 /// <reference types="@vertx/core/runtime" />
 import { Router, StaticHandler, BodyHandler, } from '@vertx/web';
 import { HttpServerOptions } from '@vertx/core/options';
+import { GraphQLServer } from 'vertx-graphql';
 
-// const { GraphQLServer } = require('./graphql-vertx');
-
-import { GraphQLServer } from '../dist/graphql-vertx';
+// import { GraphQLServer } from '../dist/vertx-graphql';
+// const { GraphQLServer } = require('./vertx-graphql');
 
 import { resolvers, typeDefs, context } from './graphql';
 
-const server = new GraphQLServer({ typeDefs, resolvers, context });
+const server = new GraphQLServer({
+  typeDefs,
+  resolvers,
+  context
+});
 const app = Router.router(vertx);
 
-app.route('/hello').handler((context) => {
+app.route('/status').handler((context) => {
   const response = context.response();
   response.putHeader("content-type", "text/plain");
-  response.end("Hello World from Vert.x-Web!");
+  response.end("Status: 200");
 });
 
 app.route().handler(BodyHandler.create().handle);

@@ -10,7 +10,7 @@
 
   <groupId>vertx-graphql-example</groupId>
   <artifactId>vertx-graphql-example</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.0</version>
 
   <name>vertx-graphql-example</name>
 
