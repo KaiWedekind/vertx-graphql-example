@@ -1,6 +1,6 @@
 {
   "name": "vertx-graphql-example",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "src/index.js",
   "repository": "git@github.com:KaiWedekind/vertx-graphql-example.git",
   "author": "Kai Wedekind <wedekind.kai@googlemail.com>",
