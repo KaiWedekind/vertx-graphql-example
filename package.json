@@ -1,6 +1,6 @@
 {
   "name": "vertx-graphql-example",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "main": "src/index.js",
   "repository": "git@github.com:KaiWedekind/vertx-graphql-example.git",
   "author": "Kai Wedekind <wedekind.kai@googlemail.com>",
@@ -12,7 +12,7 @@
     "test": "es4x exec test",
     "package": "es4x package",
     "docker": "yarn package -d",
-    "build": "npm version patch && rm -r dist && mkdir dist && cp -r src/graphql-vertx/ dist/graphql-vertx"
+    "build": "sh ./scripts/build.sh"
   },
   "devDependencies": {
     "@vertx/unit": "^3.6.2",
@@ -23,7 +23,8 @@
     "@vertx/core": "^3.6.2",
     "@vertx/web": "^3.6.2",
     "graphql": "^14.0.2",
-    "querystring": "^0.2.0"
+    "querystring": "^0.2.0",
+    "vertx-graphql": "^1.0.2"
   },
   "bugs": {
     "url": "https://github.com/KaiWedekind/vertx-graphql-example/issues"

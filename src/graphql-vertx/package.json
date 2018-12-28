@@ -1,9 +1,12 @@
 {
-    "name": "vertx-graphql",
-    "version": "1.0.1",
-    "main": "index.js",
-    "repository": "git@github.com:KaiWedekind/vertx-graphql.git",
-    "author": "Kai Wedekind <wedekind.kai@googlemail.com>",
-    "license": "Apache-2.0"
-  }
-  
+  "name": "vertx-graphql",
+  "version": "1.0.3",
+  "main": "index.js",
+  "repository": "git@github.com:KaiWedekind/vertx-graphql.git",
+  "author": "Kai Wedekind <wedekind.kai@googlemail.com>",
+  "peerDependencies": {
+    "graphql": "^14.0.2",
+    "querystring": "^0.2.0"
+  },
+  "license": "Apache-2.0"
+}
