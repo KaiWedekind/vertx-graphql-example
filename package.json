@@ -12,7 +12,7 @@
     "test": "es4x exec test",
     "package": "es4x package",
     "docker": "yarn package -d",
-    "build": "rm -r dist && mkdir dist && cp -r src/graphql-vertx/ dist/graphql-vertx"
+    "build": "npm version patch && rm -r dist && mkdir dist && cp -r src/graphql-vertx/ dist/graphql-vertx"
   },
   "devDependencies": {
     "@vertx/unit": "^3.6.2",
