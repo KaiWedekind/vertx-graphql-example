@@ -2,24 +2,10 @@
 /// <reference types="@vertx/core/runtime" />
 // @ts-check
 
-import {
-  Router,
-  BodyHandler,
-  StaticHandler
-} from '@vertx/web';
-
-import {
-  graphql,
-  buildSchema
-} from 'graphql';
-
-import { renderOverview } from './render-overview';
+import { graphql, buildSchema } from 'graphql';
 import { renderGraphiQL } from './render-graphiql';
 import { renderPlayground } from './render-playground';
-
-import {
-  parseBody
-} from './parse-body';
+import { parseBody } from './parse-body';
 
 const getGraphQLParams = (ctx) => {
   return parseBody(ctx)
@@ -30,7 +16,6 @@ const getGraphQLParams = (ctx) => {
 
 const graphqlVertx = ({ schema, resolvers, context }) => {
   return (ctx) => {
-    const request = ctx.request();
     const response = ctx.response();
 
     return getGraphQLParams(ctx)
@@ -92,26 +77,6 @@ const graphqlVertx = ({ schema, resolvers, context }) => {
   }
 }
 
-const overviewHandler = (options) => {
-  if (!options || typeof options !== 'object') {
-    throw new Error('GraphQL middleware requires options.');
-  }
-
-  const html = renderOverview({
-    ENDPOINT: options.endpoint,
-    GRAPHIQL: options.graphiql,
-    PLAYGROUND: options.playground
-  });
-
-  return (ctx) => {
-    return ctx.response()
-      .putHeader('content-type', 'text/html')
-      .setChunked(true)
-      .write(html)
-      .end()
-  }
-}
-
 const graphiqlHandler = (options) => {
   if (!options || typeof options !== 'object') {
     throw new Error('GraphQL middleware requires options.');
@@ -119,8 +84,7 @@ const graphiqlHandler = (options) => {
 
   const html = renderGraphiQL({
     ENDPOINT: options.endpoint,
-    SUBSCRIPTIONS: options.subscriptions,
-    GRAPHIQL_UI: options.graphiqlUI
+    SUBSCRIPTIONS: options.subscriptions
   });
 
   return (ctx) => {
@@ -156,29 +120,28 @@ class GraphQLServer {
     this.schema = buildSchema(typeDefs);
     this.resolvers = resolvers;
     this.context = context;
+    this.graphqlPath = '';
+    this.subscriptionsPath = ''; 
   }
 
-  start({
-    port,
-    endpoint,
-    graphiql,
-    playground,
-    subscriptions,
-    graphiqlUI
-  }, done) {
-    const app = Router.router(vertx);
-
-    app.route().handler(BodyHandler.create().handle);
-    app.route().handler(StaticHandler.create().handle);
-
-    endpoint = endpoint || '/graphql'
-
-    if (typeof endpoint === 'string') {
-      endpoint = (endpoint[0] === '/')
-        ? endpoint
-        : `/${endpoint}`;
+  applyMiddleware({ app, path = '/graphql', graphiql, playground }) {
+    if (typeof path === 'string') {
+      path = (path[0] === '/')
+        ? path
+        : `/${path}`;
     } else {
-      endpoint = '/graphql';
+      path = '/graphql';
+    }
+
+    this.graphqlPath = path;
+    this.subscriptionsPath = '/subscriptions'; 
+
+    if (typeof graphiql === 'string') {
+      graphiql = (graphiql[0] === '/')
+        ? graphiql
+        : `/${graphiql}`;
+    } else {
+      graphiql = '/graphiql';
     }
 
     if (typeof playground === 'string') {
@@ -189,7 +152,7 @@ class GraphQLServer {
       playground = '/playground';
     }
 
-    app.post(endpoint).handler(graphqlVertx({
+    app.post(path).handler(graphqlVertx({
       schema: this.schema,
       resolvers: this.resolvers,
       context: this.context
@@ -197,32 +160,34 @@ class GraphQLServer {
 
     if (typeof graphiql === 'string') {
       app.get(graphiql).handler(graphiqlHandler({ 
-        endpoint: endpoint,
-        subscriptions: subscriptions || '',
-        graphiqlUI: graphiqlUI
+        endpoint: path,
+        subscriptions: this.subscriptionsPath || ''
       }));
     }
 
     if (typeof playground === 'string') {
       app.get(playground).handler(playgroundHandler({ 
-        endpoint: endpoint,
-        subscriptions: subscriptions || ''
+        endpoint: path,
+        subscriptions: this.subscriptionsPath || ''
       }));
     }
 
-    app.get('/').handler(overviewHandler({ 
-      endpoint: endpoint,
-      graphiql: graphiql,
-      playground: playground
-    }));
-    
-    const server = vertx.createHttpServer()
-      
-    server.requestHandler((result) => {
-      return app.accept(result);
-    });
+    // console.log('app', app);
+    // console.log('path', path);
+  }
 
-    server.listen(port, done);
+  installSubscriptionHandlers(app) {
+    if (typeof this.subscriptionsPath === 'string') {
+      app.route(this.subscriptionsPath).handler((ctx) => {
+        const request = ctx.request();
+        const response = request.response();
+        const headers = response.headers();
+        headers.set("Sec-Websocket-Protocol", "graphql-subscriptions");
+        
+        request.response().putHeader('Sec-Websocket-Protocol', 'graphql-subscriptions');
+        request.upgrade();
+      });
+    }
   }
 }
 

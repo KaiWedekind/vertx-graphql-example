@@ -11,8 +11,7 @@ const GRAPHIQL_VERSION = '0.12.0';
 
 const renderGraphiQL = ({
   ENDPOINT,
-  SUBSCRIPTIONS,
-  GRAPHIQL_UI
+  SUBSCRIPTIONS
 }) => {
   return `
     <!--
@@ -34,17 +33,11 @@ const renderGraphiQL = ({
     <html>
       <head>
         <meta charset="utf-8" />
-        <title>${ GRAPHIQL_UI.title
-          ? GRAPHIQL_UI.title
-          : 'GraphiQL' }
-        </title>
+        <title>GraphiQL</title>
         <meta name="robots" content="noindex" />
         <meta name="referrer" content="origin" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        ${ GRAPHIQL_UI.favicon
-          ? `<link rel="shortcut icon" href="${GRAPHIQL_UI.favicon}">`
-          : '<link rel="shortcut icon" href="https://graphql.org/img/favicon.png">'
-        }
+        <link rel="shortcut icon" href="https://graphql.org/img/favicon.png">
         <style>
           body {
             margin: 0;
@@ -56,9 +49,6 @@ const renderGraphiQL = ({
         </style>
 
         <link href="//cdn.jsdelivr.net/npm/graphiql@${GRAPHIQL_VERSION}/graphiql.css" rel="stylesheet" />
-        ${ GRAPHIQL_UI.stylesheet
-          ? `<link rel="stylesheet" href="${GRAPHIQL_UI.stylesheet}" />`: ''}
-
         <script src="//cdn.jsdelivr.net/es6-promise/4.0.5/es6-promise.auto.min.js"></script>
         <script src="//cdn.jsdelivr.net/fetch/0.9.0/fetch.min.js"></script>
         <script src="//cdn.jsdelivr.net/react/15.4.2/react.min.js"></script>
@@ -152,7 +142,7 @@ const renderGraphiQL = ({
           // additional child elements.
 
           ${ SUBSCRIPTIONS ? `
-            let subscriptionsClient = new window.SubscriptionsTransportWs.SubscriptionClient('${SUBSCRIPTIONS}', {
+            let subscriptionsClient = new window.SubscriptionsTransportWs.SubscriptionClient('ws://' + window.location.host + '${SUBSCRIPTIONS}', {
               reconnect: true
             });
             let customFetcher = window.GraphiQLSubscriptionsFetcher.graphQLFetcher(subscriptionsClient, graphQLFetcher);

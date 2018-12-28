@@ -1,0 +1,9 @@
+{
+    "name": "vertx-graphql",
+    "version": "1.0.0",
+    "main": "index.js",
+    "repository": "git@github.com:KaiWedekind/vertx-graphql.git",
+    "author": "Kai Wedekind <wedekind.kai@googlemail.com>",
+    "license": "Apache-2.0"
+  }
+  
