@@ -1,4 +1,4 @@
-cd src/graphql-vertx
+cd src/vertx-graphql
 
 npm version patch
 
@@ -8,4 +8,4 @@ rm -r dist
 
 mkdir dist
 
-cp -r src/graphql-vertx/ dist/graphql-vertx
+cp -r src/vertx-graphql/ dist/vertx-graphql

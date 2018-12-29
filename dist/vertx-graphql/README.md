@@ -9,3 +9,7 @@ npm install --save vertx-graphql
 ```sh
 yarn add vertx-graphql
 ```
+
+
+Documentation:
+https://vertx-graphql.github.io/

@@ -2,6 +2,7 @@
 /// <reference types="@vertx/core/runtime" />
 // @ts-check
 
+import { BodyHandler, } from '@vertx/web';
 import { graphql, buildSchema } from 'graphql';
 import { renderGraphiQL } from './render-graphiql';
 import { renderPlayground } from './render-playground';
@@ -152,6 +153,7 @@ class GraphQLServer {
       playground = '/playground';
     }
 
+    app.post(path).handler(BodyHandler.create().handle);
     app.post(path).handler(graphqlVertx({
       schema: this.schema,
       resolvers: this.resolvers,
@@ -171,9 +173,6 @@ class GraphQLServer {
         subscriptions: this.subscriptionsPath || ''
       }));
     }
-
-    // console.log('app', app);
-    // console.log('path', path);
   }
 
   installSubscriptionHandlers(app) {

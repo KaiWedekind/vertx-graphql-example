@@ -1,10 +1,11 @@
 {
   "name": "vertx-graphql",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "main": "index.js",
-  "repository": "git@github.com:KaiWedekind/vertx-graphql.git",
+  "homepage": "https://vertx-graphql.github.io",
+  "repository": "",
   "author": "Kai Wedekind <wedekind.kai@googlemail.com>",
-  "peerDependencies": {
+  "dependencies": {
     "graphql": "^14.0.2",
     "querystring": "^0.2.0"
   },

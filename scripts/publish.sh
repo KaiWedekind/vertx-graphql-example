@@ -1,4 +1,4 @@
-cd dist/graphql-vertx
+cd dist/vertx-graphql
 
 npm publish
 

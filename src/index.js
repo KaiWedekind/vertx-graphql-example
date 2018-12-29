@@ -1,8 +1,9 @@
 /// <reference types="@vertx/core/runtime" />
 import { Router, StaticHandler, BodyHandler, } from '@vertx/web';
 import { HttpServerOptions } from '@vertx/core/options';
-import { GraphQLServer } from 'vertx-graphql';
+// import { GraphQLServer } from 'vertx-graphql';
 
+import { GraphQLServer } from './vertx-graphql';
 // import { GraphQLServer } from '../dist/vertx-graphql';
 // const { GraphQLServer } = require('./vertx-graphql');
 
@@ -21,7 +22,7 @@ app.route('/status').handler((context) => {
   response.end("Status: 200");
 });
 
-app.route().handler(BodyHandler.create().handle);
+// app.route().handler(BodyHandler.create().handle);
 app.route().handler(StaticHandler.create().handle);
 
 server.applyMiddleware({
