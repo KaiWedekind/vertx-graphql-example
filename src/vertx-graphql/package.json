@@ -1,6 +1,6 @@
 {
   "name": "vertx-graphql",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "main": "index.js",
   "homepage": "https://vertx-graphql.github.io",
   "repository": "",

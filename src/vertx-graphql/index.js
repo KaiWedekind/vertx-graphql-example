@@ -109,7 +109,8 @@ const graphiqlHandler = (options) => {
     ENDPOINT: options.endpoint,
     SUBSCRIPTIONS: options.subscriptions,
     THEME: options.theme,
-    INTROSPECTION: options.introspection
+    INTROSPECTION: options.introspection,
+    DEFAULT: options.defaultQuery
   });
 
   return (ctx) => {
@@ -200,7 +201,9 @@ class GraphQLServer {
         theme: graphiql &&
                graphiql.settings &&
                themesGraphiQL.includes(graphiql.settings['editor.theme']) ? graphiql.settings['editor.theme']: null,
-        introspection: this.introspection === false ? null: undefined
+        introspection: this.introspection === false ? null: undefined,
+        defaultQuery: graphiql &&
+                      graphiql.defaultQuery ? graphiql.defaultQuery: null
       }));
     } else if (playground) {
       app.get(path).handler(playgroundHandler({ 
@@ -238,7 +241,9 @@ class GraphQLServer {
                    graphiql.settings &&
                    graphiql.settings['editor.theme'] &&
                    themesGraphiQL.includes(graphiql.settings['editor.theme']) ? graphiql.settings['editor.theme']: null,
-            introspection: this.introspection === false ? null: undefined
+            introspection: this.introspection === false ? null: undefined,
+            defaultQuery: graphiql &&
+                          graphiql.defaultQuery ? graphiql.defaultQuery: null
           }));
         }
       }

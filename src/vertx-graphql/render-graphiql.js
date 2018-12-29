@@ -13,7 +13,8 @@ const renderGraphiQL = ({
   ENDPOINT,
   SUBSCRIPTIONS,
   THEME,
-  INTROSPECTION
+  INTROSPECTION,
+  DEFAULT
 }) => {
   return `
     <!--
@@ -164,7 +165,8 @@ const renderGraphiQL = ({
               onEditQuery: onEditQuery,
               onEditVariables: onEditVariables,
               onEditOperationName: onEditOperationName,
-              ${ THEME ? `editorTheme: '${THEME}',` : '' } 
+              ${ DEFAULT ? `defaultQuery: '${DEFAULT}',`: ''}
+              ${ THEME ? `editorTheme: '${THEME}',` : '' }
             }),
             document.getElementById('graphiql')
           );

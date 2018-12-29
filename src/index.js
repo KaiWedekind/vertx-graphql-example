@@ -37,7 +37,8 @@ const server = new GraphQLServer({
   graphiql: {
     settings: {
       'editor.theme': 'solarized',
-    }
+    },
+    defaultQuery: '{ welcome hello }'
   }
 });
 const app = Router.router(vertx);
