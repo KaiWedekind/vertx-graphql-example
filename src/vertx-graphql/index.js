@@ -7,6 +7,10 @@ import { graphql, buildSchema } from 'graphql';
 import { renderGraphiQL } from './render-graphiql';
 import { renderPlayground } from './render-playground';
 import { parseBody } from './parse-body';
+import {
+  themesGraphiQL,
+  themesPlayground
+} from './themes';
 
 const getGraphQLParams = (ctx) => {
   return parseBody(ctx)
@@ -15,7 +19,7 @@ const getGraphQLParams = (ctx) => {
     });
 }
 
-const graphqlVertx = ({ schema, resolvers, context }) => {
+const graphqlVertx = ({ schema, resolvers, context }, introspection) => {
   return (ctx) => {
     const response = ctx.response();
 
@@ -68,11 +72,29 @@ const graphqlVertx = ({ schema, resolvers, context }) => {
               .end();
           }
 
-          return response
-            .putHeader('content-type', 'application/json')
-            .setChunked(true)
-            .write(JSON.stringify(resolvedData))
-            .end();
+          if (introspection === false) {
+            if (resolvedData &&
+                resolvedData.data &&
+                (resolvedData.data.__schema || resolvedData.data.__type)) {
+                  return response
+                    .putHeader('content-type', 'application/json')
+                    .setChunked(true)
+                    .write()
+                    .end();
+            } else {
+              return response
+                .putHeader('content-type', 'application/json')
+                .setChunked(true)
+                .write(JSON.stringify(resolvedData))
+                .end();
+            }
+          } else {
+            return response
+              .putHeader('content-type', 'application/json')
+              .setChunked(true)
+              .write(JSON.stringify(resolvedData))
+              .end();
+          }
         });
       });
   }
@@ -85,7 +107,9 @@ const graphiqlHandler = (options) => {
 
   const html = renderGraphiQL({
     ENDPOINT: options.endpoint,
-    SUBSCRIPTIONS: options.subscriptions
+    SUBSCRIPTIONS: options.subscriptions,
+    THEME: options.theme,
+    INTROSPECTION: options.introspection
   });
 
   return (ctx) => {
@@ -104,7 +128,10 @@ const playgroundHandler = (options) => {
 
   const html = renderPlayground({
     ENDPOINT: options.endpoint,
-    SUBSCRIPTIONS: options.subscriptions
+    SUBSCRIPTIONS: options.subscriptions,
+    THEME: options.theme,
+    TABS: JSON.stringify(options.tabs, null, 2),
+    INTROSPECTION: options.introspection
   });
 
   return (ctx) => {
@@ -117,15 +144,34 @@ const playgroundHandler = (options) => {
 }
 
 class GraphQLServer {
-  constructor({ typeDefs, resolvers, context }) {
+  constructor({
+    typeDefs,
+    resolvers,
+    context,
+    introspection,
+    playground,
+    graphiql,
+    tracing
+  }) {
     this.schema = buildSchema(typeDefs);
     this.resolvers = resolvers;
     this.context = context;
     this.graphqlPath = '';
-    this.subscriptionsPath = ''; 
+    this.subscriptionsPath = '';
+    this.introspection = introspection;
+    this.playground = playground;
+    this.graphiql = graphiql;
+    this.tracing = tracing;
   }
 
-  applyMiddleware({ app, path = '/graphql', graphiql, playground }) {
+  applyMiddleware({ app, path = '/graphql' }) {
+    if (!app) {
+      throw new Error('app is not defined')
+    }
+    
+    this.graphqlPath = path;
+    this.subscriptionsPath = '/subscriptions';
+
     if (typeof path === 'string') {
       path = (path[0] === '/')
         ? path
@@ -134,44 +180,68 @@ class GraphQLServer {
       path = '/graphql';
     }
 
-    this.graphqlPath = path;
-    this.subscriptionsPath = '/subscriptions'; 
-
-    if (typeof graphiql === 'string') {
-      graphiql = (graphiql[0] === '/')
-        ? graphiql
-        : `/${graphiql}`;
-    } else {
-      graphiql = '/graphiql';
-    }
-
-    if (typeof playground === 'string') {
-      playground = (playground[0] === '/')
-        ? playground
-        : `/${playground}`;
-    } else {
-      playground = '/playground';
-    }
+    const env = JSON.parse(JSON.stringify(process.env));
+    const playground = this.playground;
+    const graphiql = this.graphiql;
+    const introspection = this.introspection;
 
     app.post(path).handler(BodyHandler.create().handle);
+
     app.post(path).handler(graphqlVertx({
       schema: this.schema,
       resolvers: this.resolvers,
       context: this.context
-    }));
+    }, introspection));
 
-    if (typeof graphiql === 'string') {
-      app.get(graphiql).handler(graphiqlHandler({ 
+    if (graphiql && !playground) {
+      app.get(path).handler(graphiqlHandler({ 
         endpoint: path,
-        subscriptions: this.subscriptionsPath || ''
+        subscriptions: this.subscriptionsPath || '',
+        theme: graphiql &&
+               graphiql.settings &&
+               themesGraphiQL.includes(graphiql.settings['editor.theme']) ? graphiql.settings['editor.theme']: null,
+        introspection: this.introspection === false ? null: undefined
       }));
-    }
-
-    if (typeof playground === 'string') {
-      app.get(playground).handler(playgroundHandler({ 
+    } else if (playground) {
+      app.get(path).handler(playgroundHandler({ 
         endpoint: path,
-        subscriptions: this.subscriptionsPath || ''
+        subscriptions: this.subscriptionsPath || '',
+        theme: playground &&
+               playground.settings &&
+               themesPlayground.includes(playground.settings['editor.theme']) ? playground.settings['editor.theme']: null,
+        tabs: playground &&
+              playground.tabs &&
+              Array.isArray(playground.tabs) &&
+              playground.tabs.length ? playground.tabs: null,
+        introspection: this.introspection === false ? null: undefined
       }));
+    } else {
+      if (env.ES4X_ENV !== 'production') {
+        if (playground !== false) {
+          app.get(path).handler(playgroundHandler({ 
+            endpoint: path,
+            subscriptions: this.subscriptionsPath || '',
+            theme: playground &&
+                   playground.settings &&
+                   themesPlayground.includes(playground.settings['editor.theme']) ? playground.settings['editor.theme']: null,
+            tabs: playground &&
+                  playground.tabs &&
+                  Array.isArray(playground.tabs) &&
+                  playground.tabs.length ? playground.tabs: null,
+            introspection: this.introspection === false ? null: undefined
+          }));
+        } else if (graphiql !== false) {
+          app.get(path).handler(graphiqlHandler({ 
+            endpoint: path,
+            subscriptions: this.subscriptionsPath || '',
+            theme: graphiql &&
+                   graphiql.settings &&
+                   graphiql.settings['editor.theme'] &&
+                   themesGraphiQL.includes(graphiql.settings['editor.theme']) ? graphiql.settings['editor.theme']: null,
+            introspection: this.introspection === false ? null: undefined
+          }));
+        }
+      }
     }
   }
 

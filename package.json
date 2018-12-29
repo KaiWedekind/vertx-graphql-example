@@ -8,6 +8,7 @@
   "scripts": {
     "postinstall": "es4x postinstall",
     "dev": "watch 'npm run start' ./src",
+    "prod": "ES4X_ENV=production npm run start",
     "start": "es4x exec run",
     "test": "es4x exec test",
     "package": "es4x package",

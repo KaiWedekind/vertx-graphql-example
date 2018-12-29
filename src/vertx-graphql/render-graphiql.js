@@ -11,7 +11,9 @@ const GRAPHIQL_VERSION = '0.12.0';
 
 const renderGraphiQL = ({
   ENDPOINT,
-  SUBSCRIPTIONS
+  SUBSCRIPTIONS,
+  THEME,
+  INTROSPECTION
 }) => {
   return `
     <!--
@@ -54,6 +56,8 @@ const renderGraphiQL = ({
         <script src="//cdn.jsdelivr.net/react/15.4.2/react.min.js"></script>
         <script src="//cdn.jsdelivr.net/react/15.4.2/react-dom.min.js"></script>
         <script src="//cdn.jsdelivr.net/npm/graphiql@${GRAPHIQL_VERSION}/graphiql.min.js"></script>
+
+        ${ THEME ? `<link rel="stylesheet" href="https://codemirror.net/theme/${THEME}.css" />` : ''}
 
         ${ SUBSCRIPTIONS
           ? `<script src="//unpkg.com/subscriptions-transport-ws@0.5.4/browser/client.js"></script>
@@ -153,12 +157,14 @@ const renderGraphiQL = ({
               fetcher: ${ SUBSCRIPTIONS
                 ? 'customFetcher'
                 : 'graphQLFetcher' },
+              schema: ${INTROSPECTION},
               query: parameters.query,
               variables: parameters.variables,
               operationName: parameters.operationName,
               onEditQuery: onEditQuery,
               onEditVariables: onEditVariables,
-              onEditOperationName: onEditOperationName
+              onEditOperationName: onEditOperationName,
+              ${ THEME ? `editorTheme: '${THEME}',` : '' } 
             }),
             document.getElementById('graphiql')
           );

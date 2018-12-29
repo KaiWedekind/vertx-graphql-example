@@ -8,7 +8,10 @@
 
 const renderPlayground = ({
   ENDPOINT,
-  SUBSCRIPTIONS
+  SUBSCRIPTIONS,
+  THEME,
+  TABS,
+  INTROSPECTION
 }) => {
   return `
   <!DOCTYPE html>
@@ -500,7 +503,11 @@ const renderPlayground = ({
           root.classList.add('playgroundIn');
           GraphQLPlayground.init(root, {
             endpoint: '${ENDPOINT}',
-            subscriptionEndpoint: '${SUBSCRIPTIONS}'
+            subscriptionEndpoint: '${SUBSCRIPTIONS}',
+            settings: {
+              'editor.theme': '${THEME}'
+            },
+            ${TABS ? `tabs: ${TABS}`: ''}
           })
         })
       </script>
