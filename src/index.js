@@ -1,4 +1,7 @@
 /// <reference types="@vertx/core/runtime" />
+/// <reference types="./vertx-graphql" />
+// @ts-check
+
 import { Router, StaticHandler } from '@vertx/web';
 import { HttpServerOptions } from '@vertx/core/options';
 
@@ -41,6 +44,7 @@ const server = new GraphQLServer({
     defaultQuery: '{ welcome hello }'
   }
 });
+
 const app = Router.router(vertx);
 
 app.route('/status').handler((context) => {
@@ -56,7 +60,7 @@ server.applyMiddleware({
   path: '/graphql'
 });
 
-const port = process.env.PORT || 9100;
+const port = parseInt(process.env.PORT) || 9100;
 const host = process.env.HOST || '0.0.0.0';
 
 const options = new HttpServerOptions();

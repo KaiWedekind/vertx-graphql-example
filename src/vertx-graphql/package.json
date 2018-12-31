@@ -1,13 +1,33 @@
 {
   "name": "vertx-graphql",
-  "version": "1.0.7",
+  "description": "Create a GraphQL HTTP Server with Vert.x",
+  "version": "1.0.8",
   "main": "index.js",
+  "types": "index.d.ts",
   "homepage": "https://vertx-graphql.github.io",
   "repository": "",
   "author": "Kai Wedekind <wedekind.kai@googlemail.com>",
+  "public": true,
   "dependencies": {
     "graphql": "^14.0.2",
-    "querystring": "^0.2.0"
+    "querystring": "^0.2.0",
+    "@vertx/web": "^3.6.2"
   },
-  "license": "Apache-2.0"
+  "keywords": [
+    "Vert.x",
+    "graphql",
+    "graphql-js",
+    "graphql-server",
+    "GraphQL",
+    "Schema",
+    "Schema Language",
+    "Middleware",
+    "JavaScript",
+    "http",
+    "server",
+    "api",
+    "Tools"
+  ],
+  "license": "Apache-2.0",
+  "sideEffects": false
 }

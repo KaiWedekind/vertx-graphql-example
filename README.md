@@ -110,3 +110,25 @@ vertx.createHttpServer()
 [GraphiQL](https://github.com/graphql/graphiql)
 
 [Themes](https://codemirror.net/theme/)
+
+[Subscriptions](https://www.apollographql.com/docs/graphql-subscriptions/)
+
+
+
+### Typescript
+
+This package includes [Typescript](http://www.typescriptlang.org/) typedefinitions and your IDE should find then automatically.
+
+When working in a project you can enable type hinting for the runtime as:
+
+```js
+/// <definition types="vertx-graphql" />
+// @ts-check
+
+// Your JavaScript / TypeScript code here...
+```
+
+## Links
+
+* [Eclipse Vert.x](https://vertx.io)
+* [ES4X](https://reactiverse.io/es4x)
