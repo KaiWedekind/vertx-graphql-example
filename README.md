@@ -114,6 +114,13 @@ vertx.createHttpServer()
 [Subscriptions](https://www.apollographql.com/docs/graphql-subscriptions/)
 
 
+[GrapqhQL Tracing](https://github.com/apollographql/apollo-server/tree/master/packages/apollo-tracing)
+
+
+[Subscription-Operation-Definitions](https://facebook.github.io/graphql/draft/#sec-Subscription-Operation-Definitions)
+
+
+[Examples](https://github.com/vert-x3/vertx-examples)
 
 ### Typescript
 

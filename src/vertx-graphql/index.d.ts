@@ -15,6 +15,8 @@
  */
 
 import { Router } from '@vertx/web';
+import { EventBus, WebSocket } from '@vertx/core';
+import { HttpServerOptions } from '@vertx/core/options';
 
 interface Tab {
   endpoint?: string,
@@ -37,20 +39,49 @@ interface GraphQLServerOptions {
       'editor.theme'?: string,
     },
     defaultQuery?: string,
-  }
+  },
+  onConnect?: (websocket: WebSocket, context: ConnectionContext) => void
+  onDisconnect?: (websocket: WebSocket, context: ConnectionContext) => void
 }
 
 interface GraphQLMiddlewareOptions {
   app: Router,
-  path: string
+  path?: string
 }
 
 export class GraphQLServer {
-  constructor(options: GraphQLServerOptions) : void;
+  constructor(options: GraphQLServerOptions): void;
 
   public graphqlPath: string;
   public subscriptionsPath: string;
 
   applyMiddleware(options: GraphQLMiddlewareOptions): void
-  installSubscriptionHandlers(app: Router): void
+  setSubscriptionOptions(options: HttpServerOptions): HttpServerOptions
+  installSubscriptionHandlers(app: Router): Router
+}
+
+interface PubSubEngine {
+  publish(triggerName: string, payload: any): Promise<void>;
+  subscribe(triggerName: string, onMessage: Function, options: Object): Promise<number>;
+  unsubscribe(subId: number);
+  asyncIterator<T>(triggers: string | string[]): AsyncIterator<T>;
+}
+
+interface EventEmitter extends EventBus {}
+
+interface PubSubOptions {
+  eventEmitter?: EventEmitter;
+}
+
+export class PubSub implements PubSubEngine {
+  protected ee: EventEmitter;
+  private subscriptions: { [key: string]: [string, (...args: any[]) => void] };
+  private subIdCounter: number;
+
+  constructor(options: PubSubOptions = {}): void;
+
+  public publish(triggerName: string, payload: any): Promise<void>;
+  public subscribe(triggerName: string, onMessage: (...args: any[]) => void): Promise<number>;
+  public unsubscribe(subId: number): void;
+  public asyncIterator<T>(triggers: string | string[]): AsyncIterator<T>;
 }

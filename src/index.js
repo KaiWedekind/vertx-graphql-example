@@ -20,21 +20,7 @@ const server = new GraphQLServer({
   playground: {
     settings: {
       'editor.theme': 'light',
-    },
-    tabs: [
-      {
-        endpoint: '/graphql',
-        query: '{ hello }',
-      },
-      {
-        endpoint: '/graphql',
-        query: '{ welcome }',
-      },
-      {
-        endpoint: '/graphql',
-        query: '{ welcome hello }',
-      },
-    ]
+    }
   },
   introspection: true,
   graphiql: {
@@ -42,6 +28,12 @@ const server = new GraphQLServer({
       'editor.theme': 'solarized',
     },
     defaultQuery: '{ welcome hello }'
+  },
+  onConnect: (websocket) => {
+    // console.log('onConnect', websocket)
+  },
+  onDisconnect: (websocket) => {
+    // console.log('onDisconnect', websocket)
   }
 });
 
@@ -59,14 +51,10 @@ server.applyMiddleware({
   app,
   path: '/graphql'
 });
-
+ 
 const port = parseInt(process.env.PORT) || 9100;
 const host = process.env.HOST || '0.0.0.0';
-
-const options = new HttpServerOptions();
-console.log('options', options.getWebsocketSubProtocols())
-options.setWebsocketSubProtocols('graphql-subscriptions, graphql-ws');
-console.log('options', options.getWebsocketSubProtocols())
+const options = server.setSubscriptionOptions(new HttpServerOptions());
 const httpServer = vertx.createHttpServer(options);
 
 httpServer.requestHandler(app.handle);

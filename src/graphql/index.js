@@ -1,3 +1,10 @@
+import { PubSub } from '../vertx-graphql';
+
+const pubsub = new PubSub();
+
+const MESSAGE_CREATED = 'message_created';
+const NEW_MESSAGE = 'new_message';
+
 const resolvers = {
   Query: {
     hello: () => 'Hello world!',
@@ -5,11 +12,25 @@ const resolvers = {
   },
   Mutation: {
     createMessage: ({ input }, context) => {
-      return {
+      const message = {
         id: 123,
         content: 'Content XYZ',
         author: 'Me'
       }
+
+      pubsub.publish(MESSAGE_CREATED, { messageCreated: message })
+
+      return message;
+    }
+  },
+  Subscription: {
+    messageCreated: {
+      subscribe: pubsub.asyncIterator([MESSAGE_CREATED])
+    },
+    newMessage: {
+      subscribe: pubsub.subscribe(MESSAGE_CREATED)
+      
+      //pubsub.asyncIterator([NEW_MESSAGE])
     }
   }
 };
@@ -33,6 +54,11 @@ const typeDefs = `
 
   type Mutation {
     createMessage(input: MessageInput): Message
+  }
+
+  type Subscription {
+    messageCreated: Message
+    newMessage: Message
   }
 `;
 
